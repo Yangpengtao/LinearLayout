@@ -969,12 +969,14 @@ public class LinearLayout extends ViewGroup {
                 matchWidthLocally = true;
             }
 
+            //得到子view的宽
             final int margin = lp.leftMargin + lp.rightMargin;
             final int measuredWidth = child.getMeasuredWidth() + margin;
             maxWidth = Math.max(maxWidth, measuredWidth);
             childState = combineMeasuredStates(childState, child.getMeasuredState());
 
             allFillParent = allFillParent && lp.width == android.widget.LinearLayout.LayoutParams.MATCH_PARENT;
+            //如果weight大于0，我们需要重新测量
             if (lp.weight > 0) {
                 /*
                  * Widths of weighted Views are bogus if we end up
@@ -990,10 +992,12 @@ public class LinearLayout extends ViewGroup {
             i += getChildrenSkipCount(child, i);
         }
 
+        //如果测量的高度大于0，且当前view前需要绘制divider，需加上divider的值
         if (mTotalLength > 0 && hasDividerBeforeChildAt(count)) {
             mTotalLength += mDividerHeight;
         }
 
+        //如果使用最大的view，模式为AT_MOST和UNSPECIFIED
         if (useLargestChild &&
                 (heightMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.UNSPECIFIED)) {
             mTotalLength = 0;
@@ -1001,11 +1005,13 @@ public class LinearLayout extends ViewGroup {
             for (int i = 0; i < count; ++i) {
                 final android.view.View child = getVirtualChildAt(i);
 
+                //child为null，直接跳过
                 if (child == null) {
                     mTotalLength += measureNullChild(i);
                     continue;
                 }
 
+                //视图不显示，跳过
                 if (child.getVisibility() == GONE) {
                     i += getChildrenSkipCount(child, i);
                     continue;
@@ -1015,20 +1021,21 @@ public class LinearLayout extends ViewGroup {
                         child.getLayoutParams();
                 // Account for negative margins
                 final int totalLength = mTotalLength;
+                //加上margin和偏移量
                 mTotalLength = Math.max(totalLength, totalLength + largestChildHeight +
                         lp.topMargin + lp.bottomMargin + getNextLocationOffset(child));
             }
         }
 
-        // Add in our padding
+        // 加上padding
         mTotalLength += mPaddingTop + mPaddingBottom;
 
         int heightSize = mTotalLength;
 
-        // Check against our minimum height
+        // 和我们的最小高度对比
         heightSize = Math.max(heightSize, getSuggestedMinimumHeight());
 
-        // Reconcile our calculated size with the heightMeasureSpec
+        // 将我们计算的尺寸与测量的尺寸进行协调
         int heightSizeAndState = resolveSizeAndState(heightSize, heightMeasureSpec, 0);
         heightSize = heightSizeAndState & MEASURED_SIZE_MASK;
 
@@ -1051,6 +1058,7 @@ public class LinearLayout extends ViewGroup {
                 android.widget.LinearLayout.LayoutParams lp = (android.widget.LinearLayout.LayoutParams) child.getLayoutParams();
 
                 float childExtra = lp.weight;
+                //权重大于0，开始计算
                 if (childExtra > 0) {
                     // Child said it could absorb extra space -- give him his share
                     int share = (int) (childExtra * delta / weightSum);
@@ -1103,7 +1111,7 @@ public class LinearLayout extends ViewGroup {
                         lp.topMargin + lp.bottomMargin + getNextLocationOffset(child));
             }
 
-            // Add in our padding
+            // 加上padding
             mTotalLength += mPaddingTop + mPaddingBottom;
             // TODO: Should we recompute the heightSpec based on the new total length?
         } else {
@@ -1148,11 +1156,17 @@ public class LinearLayout extends ViewGroup {
         setMeasuredDimension(resolveSizeAndState(maxWidth, widthMeasureSpec, childState),
                 heightSizeAndState);
 
+        //如果其中有一个match_width,则强迫所有的同意宽度
         if (matchWidth) {
             forceUniformWidth(count, heightMeasureSpec);
         }
     }
 
+    /**
+     * 统一宽度
+     * @param count  view数量
+     * @param heightMeasureSpec  高度测量规范
+     */
     private void forceUniformWidth(int count, int heightMeasureSpec) {
         // Pretend that the linear layout has an exact size.
         int uniformMeasureSpec = MeasureSpec.makeMeasureSpec(getMeasuredWidth(),
@@ -1177,6 +1191,7 @@ public class LinearLayout extends ViewGroup {
     }
 
     /**
+     * 横向测量   ------和竖向基本类似，自己 研究一下
      * Measures the children when the orientation of this LinearLayout is set
      * to {@link #HORIZONTAL}.
      *
@@ -1576,6 +1591,11 @@ public class LinearLayout extends ViewGroup {
         }
     }
 
+    /**
+     * 强迫统一高度
+     * @param count view数量
+     * @param widthMeasureSpec  宽度测量规范
+     */
     private void forceUniformHeight(int count, int widthMeasureSpec) {
         // Pretend that the linear layout has an exact size. This is the measured height of
         // ourselves. The measured height should be the max height of the children, changed
@@ -1667,6 +1687,9 @@ public class LinearLayout extends ViewGroup {
         return 0;
     }
 
+    /**
+     * 定位
+     */
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         if (mOrientation == VERTICAL) {
@@ -1677,6 +1700,7 @@ public class LinearLayout extends ViewGroup {
     }
 
     /**
+     * 竖向定位子view的位置
      * Position the children during a layout pass if the orientation of this
      * LinearLayout is set to {@link #VERTICAL}.
      *
@@ -1706,6 +1730,7 @@ public class LinearLayout extends ViewGroup {
         final int majorGravity = mGravity & Gravity.VERTICAL_GRAVITY_MASK;
         final int minorGravity = mGravity & Gravity.RELATIVE_HORIZONTAL_GRAVITY_MASK;
 
+        //通过gravity 初步计算childTop
         switch (majorGravity) {
             case Gravity.BOTTOM:
                 // mTotalLength contains the padding already
