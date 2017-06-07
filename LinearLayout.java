@@ -1748,17 +1748,22 @@ public class LinearLayout extends ViewGroup {
                 break;
         }
 
+        //遍历view
         for (int i = 0; i < count; i++) {
             final android.view.View child = getVirtualChildAt(i);
+            //如果child为null，不做变化
             if (child == null) {
                 childTop += measureNullChild(i);
             } else if (child.getVisibility() != GONE) {
+                //如果该view不为GONE
+                //得到child测量后的真是宽高
                 final int childWidth = child.getMeasuredWidth();
                 final int childHeight = child.getMeasuredHeight();
 
                 final android.widget.LinearLayout.LayoutParams lp =
                         (android.widget.LinearLayout.LayoutParams) child.getLayoutParams();
 
+                //以下就是根据gravity值，计算childLeft的值。
                 int gravity = lp.gravity;
                 if (gravity < 0) {
                     gravity = minorGravity;
@@ -1781,11 +1786,15 @@ public class LinearLayout extends ViewGroup {
                         break;
                 }
 
+                //如果child前边应该有分隔符，加上分隔符的height
                 if (hasDividerBeforeChildAt(i)) {
                     childTop += mDividerHeight;
                 }
 
+                //加上margin值
                 childTop += lp.topMargin;
+                //设置child的位置。根据top,left,width,height
+                //内部调用child.layout()方法
                 setChildFrame(child, childLeft, childTop + getLocationOffset(child),
                         childWidth, childHeight);
                 childTop += childHeight + lp.bottomMargin + getNextLocationOffset(child);
@@ -1795,6 +1804,10 @@ public class LinearLayout extends ViewGroup {
         }
     }
 
+    /**
+     * 属性变换时调用
+     * @param layoutDirection
+     */
     @Override
     public void onRtlPropertiesChanged(@ResolvedLayoutDir int layoutDirection) {
         super.onRtlPropertiesChanged(layoutDirection);
@@ -1807,6 +1820,7 @@ public class LinearLayout extends ViewGroup {
     }
 
     /**
+     * 横向   整个流程类似于竖向
      * Position the children during a layout pass if the orientation of this
      * LinearLayout is set to {@link #HORIZONTAL}.
      *
@@ -1942,11 +1956,20 @@ public class LinearLayout extends ViewGroup {
         }
     }
 
+    /**
+     * 设置child的位置
+     * @param child
+     * @param left
+     * @param top
+     * @param width
+     * @param height
+     */
     private void setChildFrame(android.view.View child, int left, int top, int width, int height) {
         child.layout(left, top, left + width, top + height);
     }
 
     /**
+     * 设置布局流向
      * Should the layout be a column or a row.
      * @param orientation Pass {@link #HORIZONTAL} or {@link #VERTICAL}. Default
      * value is {@link #HORIZONTAL}.
@@ -1961,6 +1984,7 @@ public class LinearLayout extends ViewGroup {
     }
 
     /**
+     * 得到布局流向
      * Returns the current orientation.
      *
      * @return either {@link #HORIZONTAL} or {@link #VERTICAL}
@@ -1971,6 +1995,7 @@ public class LinearLayout extends ViewGroup {
     }
 
     /**
+     * 设置布局引向
      * Describes how the child views are positioned. Defaults to GRAVITY_TOP. If
      * this layout has a VERTICAL orientation, this controls where all the child
      * views are placed if there is extra vertical space. If this layout has a
