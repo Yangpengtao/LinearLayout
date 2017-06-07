@@ -99,25 +99,24 @@ public class LinearLayout extends ViewGroup {
     public static final int SHOW_DIVIDER_NONE = 0;
     /**
      * Show a divider at the beginning of the group.
-     * 在组开始时显示分隔符。
+     * 在开始处显示分隔符。
      */
     public static final int SHOW_DIVIDER_BEGINNING = 1;
     /**
      * Show dividers between each item in the group.
-     * 在每个项目之间显示分隔符。
+     * 在每个item之间显示分隔符。
      */
     public static final int SHOW_DIVIDER_MIDDLE = 2;
     /**
      * Show a divider at the end of the group.
-     * 在组结尾显示分隔符。
+     * 在结尾处显示分隔符。
      */
     public static final int SHOW_DIVIDER_END = 4;
 
     /**
      * Whether the children of this layout are baseline aligned.  Only applicable
      * if {@link #mOrientation} is horizontal.
-     * 这个布局的孩子是否是基线对齐的。只适用
-     * 如果{链接}是水平的。
+     * 这个布局的child是否是基线对齐的。只适用如果{链接}是水平的。
      */
     @ViewDebug.ExportedProperty(category = "layout")
     private boolean mBaselineAligned = true;
@@ -133,7 +132,7 @@ public class LinearLayout extends ViewGroup {
      * 将此索引作为基线。
      *
      * 注意:这是与{ @ link # mbaselinealigned}的正交,有关
-     * 与此布局的儿童是否为基线对齐。
+     * 与此布局的child是否为基线对齐。
      */
     @ViewDebug.ExportedProperty(category = "layout")
     private int mBaselineAlignedChildIndex = -1;
@@ -143,9 +142,8 @@ public class LinearLayout extends ViewGroup {
      * We'll calculate the baseline of this layout as we measure vertically; for
      * horizontal linear layouts, the offset of 0 is appropriate.
      *
-     * 对儿童基线的额外补偿。
-     * 我们将计算此布局的基线,因为我们垂直测量;为
-     * 水平线性布局,偏移值为0。
+     * 对child基线的额外补偿。
+     * 我们将计算此布局的基线,因为我们垂直测量;为水平线性布局,偏移值为0。
      */
     @ViewDebug.ExportedProperty(category = "measurement")
     private int mBaselineChildTop = 0;
